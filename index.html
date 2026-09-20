@@ -1,0 +1,369 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta
+      name="description"
+      content="A case study of a multi-source job discovery and relevance-ranking system built with Python, Cloudflare Workers, GitHub Actions, Google Sheets and Telegram."
+    />
+    <meta name="theme-color" content="#f3efe7" />
+    <meta property="og:title" content="Signal, not noise — Job discovery system case study" />
+    <meta
+      property="og:description"
+      content="How a weekend prototype became a dependable, explainable job-discovery pipeline."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://hemangosonowal-beep.github.io/job-discovery-case-study/" />
+    <link rel="canonical" href="https://hemangosonowal-beep.github.io/job-discovery-case-study/" />
+    <link rel="stylesheet" href="./styles.css" />
+    <title>Signal, not noise — Job discovery system case study</title>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <header class="site-header" data-header>
+      <a class="brand" href="#top" aria-label="Case study home">
+        <span class="brand-mark" aria-hidden="true">HS</span>
+        <span>Hemango Sonowal</span>
+      </a>
+      <nav aria-label="Case study navigation">
+        <a href="#system">System</a>
+        <a href="#decisions">Decisions</a>
+        <a href="#outcomes">Outcomes</a>
+      </nav>
+      <a class="header-link" href="#system">
+        View architecture <span aria-hidden="true">↓</span>
+      </a>
+    </header>
+
+    <main id="main">
+      <section class="hero section-shell" id="top">
+        <div class="hero-copy reveal">
+          <p class="eyebrow"><span></span> Case study · Automation · 2026</p>
+          <h1>Turning scattered job listings into <em>useful signal.</em></h1>
+          <p class="hero-lede">
+            I built a multi-source discovery system that checks public career platforms,
+            normalizes inconsistent data, ranks opportunities with an explainable model,
+            and delivers a short, useful digest—automatically.
+          </p>
+          <div class="hero-actions">
+            <a class="button button-primary" href="#system">Explore the system</a>
+            <a class="text-link" href="#lessons">What I learned <span aria-hidden="true">↓</span></a>
+          </div>
+          <dl class="hero-meta" aria-label="Project summary">
+            <div>
+              <dt>Role</dt>
+              <dd>Product, architecture &amp; build</dd>
+            </div>
+            <div>
+              <dt>Build</dt>
+              <dd>AI-assisted development</dd>
+            </div>
+            <div>
+              <dt>Status</dt>
+              <dd><span class="status-dot"></span> Live system</dd>
+            </div>
+          </dl>
+        </div>
+
+        <div class="hero-visual reveal" aria-label="Illustration of a ranked Telegram job alert">
+          <div class="visual-orbit orbit-one"></div>
+          <div class="visual-orbit orbit-two"></div>
+          <div class="signal-card">
+            <div class="signal-header">
+              <div class="signal-app">
+                <span class="telegram-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" role="img">
+                    <path d="m20.4 4.1-3 14.2c-.2 1-1 1.2-1.8.8l-4.6-3.4-2.2 2.1c-.2.2-.5.5-.9.5l.3-4.7 8.6-7.8c.4-.3-.1-.5-.6-.2L5.6 12.3 1 10.9c-1-.3-1-1 .2-1.5L19 2.6c.8-.3 1.6.2 1.4 1.5Z" />
+                  </svg>
+                </span>
+                <div>
+                  <strong>Opportunity digest</strong>
+                  <span>Automated alert · just now</span>
+                </div>
+              </div>
+              <span class="live-pill">LIVE</span>
+            </div>
+
+            <div class="signal-summary">
+              <span class="signal-kicker">Top matches this run</span>
+              <strong>3 new roles worth a closer look</strong>
+              <p>Ranked from 28 newly discovered postings.</p>
+            </div>
+
+            <article class="job-card job-card-featured">
+              <div class="score-ring" aria-label="Relevance score 91 out of 100">
+                <strong>91</strong><span>/100</span>
+              </div>
+              <div>
+                <span class="job-number">01</span>
+                <h2>Category Strategy Lead</h2>
+                <p>Aurora Retail · Bengaluru · Hybrid</p>
+                <div class="job-tags"><span>Role fit</span><span>Seniority</span><span>Commerce</span></div>
+              </div>
+            </article>
+
+            <article class="job-card compact">
+              <span class="compact-rank">02</span>
+              <div><strong>Marketplace Growth Manager</strong><span>Northstar Commerce · Gurugram</span></div>
+              <span class="compact-score">86</span>
+            </article>
+            <article class="job-card compact">
+              <span class="compact-rank">03</span>
+              <div><strong>Commercial Operations Lead</strong><span>Canvas Consumer · Mumbai</span></div>
+              <span class="compact-score">82</span>
+            </article>
+
+            <div class="signal-footer">
+              <span><i></i> Next scan in 54 min</span>
+              <span>Only new matches are alerted</span>
+            </div>
+          </div>
+          <div class="floating-note note-one"><span>150+</span> companies configured</div>
+          <div class="floating-note note-two"><span>7 days</span> baseline window</div>
+        </div>
+      </section>
+
+      <section class="project-strip" aria-label="Project highlights">
+        <div><strong>150+</strong><span>companies configured</span></div>
+        <div><strong>10+</strong><span>source patterns normalized</span></div>
+        <div><strong>Hourly</strong><span>incremental discovery</span></div>
+        <div><strong>Top 5</strong><span>ranked alert, not a firehose</span></div>
+      </section>
+
+      <section class="story section-shell" id="problem">
+        <div class="section-index reveal"><span>01</span><p>The problem</p></div>
+        <div class="story-content reveal">
+          <p class="statement">
+            The challenge was not finding <em>more</em> jobs. It was finding the right ones early,
+            without repeatedly checking dozens of fragmented career sites.
+          </p>
+          <div class="problem-grid">
+            <article>
+              <span class="problem-icon">↗</span>
+              <h2>Fragmented sources</h2>
+              <p>Companies publish through many applicant-tracking systems, each with different data shapes, pagination and timestamps.</p>
+            </article>
+            <article>
+              <span class="problem-icon">⌁</span>
+              <h2>Too much noise</h2>
+              <p>Keyword alerts often ignore seniority, function, location and negative signals—creating a queue that still needs manual filtering.</p>
+            </article>
+            <article>
+              <span class="problem-icon">◷</span>
+              <h2>Timing matters</h2>
+              <p>A relevant role is more useful when discovered shortly after publication, not days later on a general-purpose aggregator.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="system section-shell" id="system">
+        <div class="section-index reveal"><span>02</span><p>The system</p></div>
+        <div class="section-heading reveal">
+          <p class="eyebrow"><span></span> One dependable loop</p>
+          <h2>From public postings to a ranked, actionable digest.</h2>
+          <p>
+            The pipeline separates scheduling, collection, decisioning and delivery. Each stage can fail visibly without corrupting the others.
+          </p>
+        </div>
+
+        <div class="architecture reveal" role="img" aria-label="Architecture diagram showing target company list, Cloudflare scheduling, GitHub Actions, public job sources, matching pipeline, Google Sheets and Telegram">
+          <article class="arch-card arch-input">
+            <span class="arch-step">01 · Define</span>
+            <div class="arch-icon">◎</div>
+            <h3>Target universe</h3>
+            <p>Prioritized companies, locations and role tracks</p>
+            <span class="arch-detail">Google Sheet · Config</span>
+          </article>
+          <article class="arch-card arch-trigger">
+            <span class="arch-step">02 · Trigger</span>
+            <div class="arch-icon">ϟ</div>
+            <h3>Cloudflare clock</h3>
+            <p>Dispatches the workflow on a controlled hourly schedule</p>
+            <span class="arch-detail">Cron Worker</span>
+          </article>
+          <article class="arch-card arch-runner">
+            <span class="arch-step">03 · Run</span>
+            <div class="arch-icon">⌘</div>
+            <h3>GitHub Actions</h3>
+            <p>Runs tests, adapters and the Python monitoring workflow</p>
+            <span class="arch-detail">Ephemeral compute</span>
+          </article>
+          <article class="arch-card arch-sources">
+            <span class="arch-step">04 · Collect</span>
+            <div class="source-cloud" aria-hidden="true">
+              <span>GH</span><span>WD</span><span>SR</span><span>LV</span><span>+7</span>
+            </div>
+            <h3>Public job sources</h3>
+            <p>ATS APIs, structured career pages and labelled alerts</p>
+            <span class="arch-detail">Read-only access</span>
+          </article>
+          <article class="arch-card arch-decision">
+            <span class="arch-step">05 · Decide</span>
+            <div class="decision-list" aria-hidden="true">
+              <span>Normalize</span><span>Deduplicate</span><span>Filter</span><span>Score</span>
+            </div>
+            <h3>Relevance engine</h3>
+            <p>Turns inconsistent postings into comparable opportunities</p>
+            <span class="arch-detail">Explainable 0–100 score</span>
+          </article>
+          <article class="arch-card arch-output">
+            <span class="arch-step">06 · Deliver</span>
+            <div class="output-split" aria-hidden="true"><span>Sheets</span><i></i><span>Telegram</span></div>
+            <h3>Ledger + alert</h3>
+            <p>Stores every match; alerts only the best new results</p>
+            <span class="arch-detail">Persistent state</span>
+          </article>
+        </div>
+
+        <div class="principles reveal">
+          <div><span>Public by design</span><p>No private recruiter systems or employer credentials.</p></div>
+          <div><span>Human in the loop</span><p>The system recommends; the candidate decides and applies.</p></div>
+          <div><span>Failure is visible</span><p>Source coverage distinguishes no jobs from broken sources.</p></div>
+        </div>
+      </section>
+
+      <section class="decisions section-shell" id="decisions">
+        <div class="section-index reveal"><span>03</span><p>Key decisions</p></div>
+        <div class="decision-grid">
+          <article class="decision-story reveal">
+            <p class="eyebrow"><span></span> Decision 01</p>
+            <h2>Rank with evidence, not a black box.</h2>
+            <p>
+              A role receives an explainable score from five dimensions. Hard filters remove clear mismatches first; missing description data lowers confidence rather than automatically rejecting the role.
+            </p>
+            <div class="score-model" aria-label="Relevance score weighting">
+              <div style="--value: 100%"><span>Role alignment</span><i></i><strong>40</strong></div>
+              <div style="--value: 62.5%"><span>Capabilities</span><i></i><strong>25</strong></div>
+              <div style="--value: 50%"><span>Seniority</span><i></i><strong>20</strong></div>
+              <div style="--value: 25%"><span>Domain</span><i></i><strong>10</strong></div>
+              <div style="--value: 12.5%"><span>Company priority</span><i></i><strong>5</strong></div>
+            </div>
+            <p class="fine-print">The score is a ranking heuristic—not a prediction of receiving an interview.</p>
+          </article>
+
+          <article class="decision-story scheduler-story reveal">
+            <p class="eyebrow"><span></span> Decision 02</p>
+            <h2>Separate the clock from the work.</h2>
+            <p>
+              GitHub Actions was a good execution environment, but its native scheduled trigger was not dependable enough for this workflow. The fix was architectural, not cosmetic.
+            </p>
+            <div class="scheduler-diagram">
+              <div><small>Reliable clock</small><strong>Cloudflare Worker</strong><span>Hourly cron</span></div>
+              <b aria-hidden="true">→</b>
+              <div><small>Execution engine</small><strong>GitHub Actions</strong><span>Test · crawl · deliver</span></div>
+            </div>
+            <blockquote>Cloudflare decides <em>when</em>. GitHub Actions decides <em>how</em>.</blockquote>
+          </article>
+
+          <article class="decision-story baseline-story reveal">
+            <p class="eyebrow"><span></span> Decision 03</p>
+            <h2>Establish state before sending alerts.</h2>
+            <p>
+              A seven-day baseline seeds the job ledger without notifications. Later runs compare stable source identifiers, append unseen roles and alert only on genuinely new, recent matches.
+            </p>
+            <ol class="timeline">
+              <li><span>Day 0</span><strong>Baseline crawl</strong><p>Populate recent inventory silently</p></li>
+              <li><span>Hourly</span><strong>Incremental scan</strong><p>Fetch and compare current postings</p></li>
+              <li><span>On match</span><strong>Rank + notify</strong><p>Send up to five useful results</p></li>
+            </ol>
+          </article>
+        </div>
+      </section>
+
+      <section class="outcomes section-shell" id="outcomes">
+        <div class="section-index reveal"><span>04</span><p>What changed</p></div>
+        <div class="outcome-heading reveal">
+          <h2>A repeatable system replaced a repetitive habit.</h2>
+          <p>The result is less time spent checking and more time evaluating the opportunities that deserve attention.</p>
+        </div>
+        <div class="outcome-grid">
+          <article class="outcome-card dark-card reveal">
+            <span class="outcome-label">Before</span>
+            <h3>Manual, fragmented, easy to miss</h3>
+            <ul>
+              <li>Repeated visits across career pages</li>
+              <li>Different filters for every platform</li>
+              <li>No consistent memory of what was seen</li>
+              <li>Alerts optimized for volume</li>
+            </ul>
+          </article>
+          <article class="outcome-card light-card reveal">
+            <span class="outcome-label">After</span>
+            <h3>Automated, ranked, explainable</h3>
+            <ul>
+              <li>One hourly collection workflow</li>
+              <li>Source-neutral job schema</li>
+              <li>Google Sheets as a persistent ledger</li>
+              <li>Five best new matches, with rationale</li>
+            </ul>
+          </article>
+        </div>
+        <div class="proof-row reveal">
+          <div><strong>0–100</strong><span>explainable relevance score</span></div>
+          <div><strong>7-day</strong><span>silent baseline prevents alert floods</span></div>
+          <div><strong>1 ledger</strong><span>for matches, history and source health</span></div>
+        </div>
+      </section>
+
+      <section class="lessons section-shell" id="lessons">
+        <div class="section-index reveal"><span>05</span><p>Reflections</p></div>
+        <div class="lessons-layout">
+          <div class="lessons-intro reveal">
+            <p class="eyebrow"><span></span> Started in a weekend</p>
+            <h2>The prototype was quick. Trust took longer.</h2>
+            <p>
+              The biggest lesson was that collecting data is the easy part. A useful system must also understand ambiguity, preserve state, explain its decisions and make failures obvious.
+            </p>
+          </div>
+          <div class="lesson-list">
+            <article class="reveal">
+              <span>01</span><div><h3>Normalize at the boundary</h3><p>Every source names locations, dates and identifiers differently. Converting them early kept the scoring and output layers simple.</p></div>
+            </article>
+            <article class="reveal">
+              <span>02</span><div><h3>Precision beats notification volume</h3><p>Capping alerts at five forced the ranking model to produce a decision, not another inbox to process.</p></div>
+            </article>
+            <article class="reveal">
+              <span>03</span><div><h3>Operational UX matters</h3><p>A source-health view, conservative parsers and clear error states made the automation maintainable after the first successful run.</p></div>
+            </article>
+            <article class="reveal">
+              <span>04</span><div><h3>AI accelerated iteration</h3><p>Codex helped explore unfamiliar systems, implement adapters and tighten tests; product judgment still determined the rules and trade-offs.</p></div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="next section-shell">
+        <div class="next-card reveal">
+          <div>
+            <p class="eyebrow light"><span></span> Next iteration</p>
+            <h2>From discovery engine to application copilot.</h2>
+            <p>
+              The roadmap keeps a person in control: learn from relevance feedback, connect strong matches to referral workflows, and prepare tailored application material for review—not automatic submission.
+            </p>
+          </div>
+          <div class="roadmap">
+            <span><i>01</i> Relevance feedback loop</span>
+            <span><i>02</i> Referral workflow</span>
+            <span><i>03</i> Application preparation</span>
+            <span><i>04</i> Search analytics</span>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer section-shell">
+      <div>
+        <span class="footer-mark">HS</span>
+        <p>Designed and built by <strong>Hemango Sonowal</strong></p>
+      </div>
+      <p class="footer-note">Built with public, read-only job data. No automated applications.</p>
+      <a href="#top">Back to top <span aria-hidden="true">↑</span></a>
+    </footer>
+
+    <script src="./script.js"></script>
+  </body>
+</html>
