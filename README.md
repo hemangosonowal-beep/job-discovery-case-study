@@ -1,6 +1,6 @@
 # Job Discovery Case Study
 
-A responsive case study for an automated, multi-source job discovery and relevance-ranking system.
+A responsive case study for an automated, multi-source job discovery system with per-user ranking, interactive Telegram feedback and a Supabase data layer.
 
 ## Publish with GitHub Pages
 

@@ -6,7 +6,7 @@
     <meta name="robots" content="noindex, nofollow" />
     <meta
       name="description"
-      content="A case study of a multi-source job discovery and relevance-ranking system built with Python, Cloudflare Workers, GitHub Actions, Google Sheets and Telegram."
+      content="A case study of a multi-user job discovery, relevance-ranking and feedback system built with Python, Cloudflare Workers, GitHub Actions, Supabase and Telegram."
     />
     <meta name="theme-color" content="#f3efe7" />
     <meta property="og:title" content="Signal, not noise — Job discovery system case study" />
@@ -30,6 +30,7 @@
       </a>
       <nav aria-label="Case study navigation">
         <a href="#system">System</a>
+        <a href="#evolution">Evolution</a>
         <a href="#decisions">Decisions</a>
         <a href="#outcomes">Outcomes</a>
       </nav>
@@ -45,8 +46,8 @@
           <h1>Turning scattered job listings into <em>useful signal.</em></h1>
           <p class="hero-lede">
             I built a multi-source discovery system that checks public career platforms,
-            normalizes inconsistent data, ranks opportunities with an explainable model,
-            and delivers a short, useful digest—automatically.
+            scores opportunities independently for multiple profiles, and turns Telegram
+            alerts into a structured feedback loop—automatically.
           </p>
           <div class="hero-actions">
             <a class="button button-primary" href="#system">Explore the system</a>
@@ -128,9 +129,9 @@
 
       <section class="project-strip" aria-label="Project highlights">
         <div><strong>150+</strong><span>companies configured</span></div>
-        <div><strong>10+</strong><span>source patterns normalized</span></div>
+        <div><strong>2 profiles</strong><span>independent ranking and delivery</span></div>
         <div><strong>Hourly</strong><span>incremental discovery</span></div>
-        <div><strong>Top 5</strong><span>ranked alert, not a firehose</span></div>
+        <div><strong>2-way</strong><span>Telegram feedback captured</span></div>
       </section>
 
       <section class="story section-shell" id="problem">
@@ -170,13 +171,13 @@
           </p>
         </div>
 
-        <div class="architecture reveal" role="img" aria-label="Architecture diagram showing target company list, Cloudflare scheduling, GitHub Actions, public job sources, matching pipeline, Google Sheets and Telegram">
+        <div class="architecture reveal" role="img" aria-label="Architecture diagram showing user profiles, Cloudflare scheduling, GitHub Actions, public job sources, per-user ranking, Supabase and Telegram">
           <article class="arch-card arch-input">
             <span class="arch-step">01 · Define</span>
             <div class="arch-icon">◎</div>
-            <h3>Target universe</h3>
-            <p>Prioritized companies, locations and role tracks</p>
-            <span class="arch-detail">Google Sheet · Config</span>
+            <h3>Profiles + preferences</h3>
+            <p>Approved résumé-derived role, capability and location profiles</p>
+            <span class="arch-detail">Versioned in Supabase</span>
           </article>
           <article class="arch-card arch-trigger">
             <span class="arch-step">02 · Trigger</span>
@@ -206,28 +207,134 @@
             <div class="decision-list" aria-hidden="true">
               <span>Normalize</span><span>Deduplicate</span><span>Filter</span><span>Score</span>
             </div>
-            <h3>Relevance engine</h3>
-            <p>Turns inconsistent postings into comparable opportunities</p>
-            <span class="arch-detail">Explainable 0–100 score</span>
+            <h3>Per-user relevance</h3>
+            <p>Scores the shared catalogue independently for each approved profile</p>
+            <span class="arch-detail">Isolated 0–100 rankings</span>
           </article>
           <article class="arch-card arch-output">
             <span class="arch-step">06 · Deliver</span>
-            <div class="output-split" aria-hidden="true"><span>Sheets</span><i></i><span>Telegram</span></div>
-            <h3>Ledger + alert</h3>
-            <p>Stores every match; alerts only the best new results</p>
-            <span class="arch-detail">Persistent state</span>
+            <div class="output-split" aria-hidden="true"><span>Supabase</span><i></i><span>Telegram</span></div>
+            <h3>State + interaction</h3>
+            <p>Persists jobs, scores and deliveries; sends each user a ranked digest</p>
+            <span class="arch-detail">Feedback-aware delivery</span>
           </article>
         </div>
 
         <div class="principles reveal">
           <div><span>Public by design</span><p>No private recruiter systems or employer credentials.</p></div>
-          <div><span>Human in the loop</span><p>The system recommends; the candidate decides and applies.</p></div>
+          <div><span>Profile isolation</span><p>One shared catalogue, with independent scores, history and Telegram delivery.</p></div>
           <div><span>Failure is visible</span><p>Source coverage distinguishes no jobs from broken sources.</p></div>
         </div>
       </section>
 
+      <section class="evolution section-shell" id="evolution">
+        <div class="section-index reveal"><span>03</span><p>Product evolution</p></div>
+        <div class="evolution-heading reveal">
+          <p class="eyebrow"><span></span> From alert to learning loop</p>
+          <h2>The monitor became a two-way, multi-user product.</h2>
+          <p>
+            Adding a second profile exposed the real product problem: collection could be shared,
+            but relevance, delivery history and feedback had to remain personal.
+          </p>
+        </div>
+
+        <div class="evolution-grid">
+          <article class="evolution-card profile-card reveal">
+            <span class="feature-number">01 · Multi-user flow</span>
+            <h3>One catalogue. Two independent perspectives.</h3>
+            <p>
+              Piyush's résumé was converted into a separate approved scoring profile. The same new jobs
+              are now evaluated against both profiles, ranked independently and delivered to each person's
+              own Telegram chat.
+            </p>
+            <div class="profile-flow" aria-label="Shared catalogue branching into two separate profiles">
+              <div class="catalog-node"><span>Shared</span><strong>Job catalogue</strong></div>
+              <i aria-hidden="true"></i>
+              <div class="profile-nodes">
+                <span><b>HS</b> Hemango</span>
+                <span><b>PB</b> Piyush</span>
+              </div>
+            </div>
+            <p class="feature-note">Profiles are versioned and approved before they can participate in delivery.</p>
+          </article>
+
+          <article class="evolution-card feedback-card reveal">
+            <span class="feature-number">02 · Interactive Telegram</span>
+            <h3>The notification became an interface.</h3>
+            <p>
+              A compact top-five digest opens job details inside the same Telegram message. Users can open
+              the posting, move between jobs, mark a match as relevant, reject it with a structured reason,
+              or report that the job details were interpreted incorrectly.
+            </p>
+            <div class="feedback-flow" aria-label="Telegram feedback interaction flow">
+              <span>Digest</span><b>→</b><span>Job detail</span><b>→</b><span>Feedback</span><b>→</b><span>Supabase</span>
+            </div>
+            <p class="feature-note">Message editing keeps the interaction compact instead of creating a stream of bot messages.</p>
+          </article>
+        </div>
+
+        <div class="telegram-proof reveal">
+          <div class="proof-copy">
+            <p class="eyebrow"><span></span> Live product UI</p>
+            <h3>Browse, decide and explain—without leaving the chat.</h3>
+            <p>
+              Each button is tied to the correct delivery, profile, Telegram user and message. The application
+              link is the only action that leaves Telegram; every other action updates the existing message and
+              writes structured context to the backend.
+            </p>
+            <div class="feedback-types">
+              <span>Relevant</span>
+              <span>Wrong role/title</span>
+              <span>Experience mismatch</span>
+              <span>Location/work mode</span>
+              <span>Skills/domain</span>
+              <span>Salary</span>
+              <span>Data issue</span>
+              <span>Optional note</span>
+            </div>
+          </div>
+          <div class="phone-gallery" aria-label="Screenshots of the live Telegram feedback interface">
+            <figure>
+              <img src="./assets/telegram-digest.jpeg" alt="Telegram top-five job digest with buttons to view each job" loading="lazy" />
+              <figcaption><span>01</span> Ranked digest</figcaption>
+            </figure>
+            <figure>
+              <img src="./assets/telegram-job-detail.jpeg" alt="Telegram job detail view with relevant, not for me and data issue feedback buttons" loading="lazy" />
+              <figcaption><span>02</span> Job-level action</figcaption>
+            </figure>
+            <figure>
+              <img src="./assets/telegram-feedback-reasons.jpeg" alt="Telegram structured reasons for why a job is not relevant" loading="lazy" />
+              <figcaption><span>03</span> Structured reason</figcaption>
+            </figure>
+          </div>
+        </div>
+
+        <div class="data-layer reveal">
+          <div>
+            <p class="eyebrow"><span></span> Durable learning data</p>
+            <h3>Supabase preserves the complete decision context.</h3>
+            <p>
+              Jobs are stored once, while scores, channels, deliveries and feedback remain user-specific.
+              Each response retains the delivered score and a job snapshot, so later analysis reflects what
+              the user actually saw—even if the source posting changes or expires.
+            </p>
+          </div>
+          <div class="schema-map" aria-label="Simplified Supabase table relationships">
+            <span class="schema-node shared"><small>Shared</small><strong>job_alert_jobs</strong></span>
+            <span class="schema-arrow" aria-hidden="true">→</span>
+            <span class="schema-node"><small>Identity</small><strong>job_alert_users</strong></span>
+            <span class="schema-node"><small>Preferences</small><strong>job_alert_profiles</strong></span>
+            <span class="schema-node"><small>Ranking</small><strong>job_alert_scores</strong></span>
+            <span class="schema-node"><small>Channel</small><strong>job_alert_channels</strong></span>
+            <span class="schema-node"><small>History</small><strong>job_alert_deliveries</strong></span>
+            <span class="schema-node accent"><small>Learning signal</small><strong>job_alert_feedback</strong></span>
+          </div>
+        </div>
+        <p class="boundary-note reveal"><strong>Current boundary:</strong> feedback is collected for analysis but does not silently change ranking weights yet.</p>
+      </section>
+
       <section class="decisions section-shell" id="decisions">
-        <div class="section-index reveal"><span>03</span><p>Key decisions</p></div>
+        <div class="section-index reveal"><span>04</span><p>Key decisions</p></div>
         <div class="decision-grid">
           <article class="decision-story reveal">
             <p class="eyebrow"><span></span> Decision 01</p>
@@ -271,11 +378,32 @@
               <li><span>On match</span><strong>Rank + notify</strong><p>Send up to five useful results</p></li>
             </ol>
           </article>
+
+          <article class="decision-story llm-story reveal">
+            <div class="llm-copy">
+              <p class="eyebrow"><span></span> Decision 04 · Challenge</p>
+              <h2>Test semantic scoring without making it a dependency.</h2>
+              <p>
+                Gemini and Groq were integrated in a read-only shadow path to compare LLM-derived evidence
+                against the deterministic Python score. The experiment did not graduate to production:
+                free-tier hourly and daily limits made consistent scheduled evaluation impractical.
+              </p>
+              <p class="fine-print">No LLM result changes live ranking, persistence or Telegram delivery.</p>
+            </div>
+            <div class="provider-stack" aria-label="Semantic scoring fallback path">
+              <div><span>01 · Try first</span><strong>Gemini</strong><small>Semantic evidence</small></div>
+              <b>↓</b>
+              <div><span>02 · Provider fallback</span><strong>Groq</strong><small>Same validated schema</small></div>
+              <b>↓</b>
+              <div class="provider-primary"><span>03 · Always available</span><strong>Python scorer</strong><small>Production ranking remains deterministic</small></div>
+              <aside><strong>Constraint discovered</strong><p>Quota exhaustion and rate limits are product reliability problems, not just API errors.</p></aside>
+            </div>
+          </article>
         </div>
       </section>
 
       <section class="outcomes section-shell" id="outcomes">
-        <div class="section-index reveal"><span>04</span><p>What changed</p></div>
+        <div class="section-index reveal"><span>05</span><p>What changed</p></div>
         <div class="outcome-heading reveal">
           <h2>A repeatable system replaced a repetitive habit.</h2>
           <p>The result is less time spent checking and more time evaluating the opportunities that deserve attention.</p>
@@ -296,21 +424,22 @@
             <h3>Automated, ranked, explainable</h3>
             <ul>
               <li>One hourly collection workflow</li>
-              <li>Source-neutral job schema</li>
-              <li>Google Sheets as a persistent ledger</li>
-              <li>Five best new matches, with rationale</li>
+              <li>Shared catalogue with isolated profile scoring</li>
+              <li>Supabase ledger for jobs, scores and deliveries</li>
+              <li>Interactive feedback captured with context</li>
             </ul>
           </article>
         </div>
         <div class="proof-row reveal">
-          <div><strong>0–100</strong><span>explainable relevance score</span></div>
-          <div><strong>7-day</strong><span>silent baseline prevents alert floods</span></div>
-          <div><strong>1 ledger</strong><span>for matches, history and source health</span></div>
+          <div><strong>2 profiles</strong><span>independent scoring and channels</span></div>
+          <div><strong>Top 5</strong><span>per-user ranked digest</span></div>
+          <div><strong>3 signals</strong><span>relevant, irrelevant or data issue</span></div>
+          <div><strong>1 catalogue</strong><span>shared crawl, isolated decisions</span></div>
         </div>
       </section>
 
       <section class="lessons section-shell" id="lessons">
-        <div class="section-index reveal"><span>05</span><p>Reflections</p></div>
+        <div class="section-index reveal"><span>06</span><p>Reflections</p></div>
         <div class="lessons-layout">
           <div class="lessons-intro reveal">
             <p class="eyebrow"><span></span> Started in a weekend</p>
@@ -324,13 +453,16 @@
               <span>01</span><div><h3>Normalize at the boundary</h3><p>Every source names locations, dates and identifiers differently. Converting them early kept the scoring and output layers simple.</p></div>
             </article>
             <article class="reveal">
-              <span>02</span><div><h3>Precision beats notification volume</h3><p>Capping alerts at five forced the ranking model to produce a decision, not another inbox to process.</p></div>
+              <span>02</span><div><h3>Share collection, isolate decisions</h3><p>A common job catalogue prevents duplicate crawling; profiles, rankings, channels and feedback stay user-specific.</p></div>
             </article>
             <article class="reveal">
-              <span>03</span><div><h3>Operational UX matters</h3><p>A source-health view, conservative parsers and clear error states made the automation maintainable after the first successful run.</p></div>
+              <span>03</span><div><h3>Feedback needs context</h3><p>A thumbs-down alone is weak data. Reason codes, delivery-time scores and job snapshots make later calibration possible.</p></div>
             </article>
             <article class="reveal">
-              <span>04</span><div><h3>AI accelerated iteration</h3><p>Codex helped explore unfamiliar systems, implement adapters and tighten tests; product judgment still determined the rules and trade-offs.</p></div>
+              <span>04</span><div><h3>Provider limits shape architecture</h3><p>Gemini and Groq were useful experiments, but free-tier quotas were too variable for the hourly critical path. Safe fallback mattered more than novelty.</p></div>
+            </article>
+            <article class="reveal">
+              <span>05</span><div><h3>AI accelerated iteration</h3><p>Codex helped explore unfamiliar systems, implement adapters and tighten tests; product judgment still determined the rules and trade-offs.</p></div>
             </article>
           </div>
         </div>
@@ -340,16 +472,16 @@
         <div class="next-card reveal">
           <div>
             <p class="eyebrow light"><span></span> Next iteration</p>
-            <h2>From discovery engine to application copilot.</h2>
+            <h2>Close the loop without losing control.</h2>
             <p>
-              The roadmap keeps a person in control: learn from relevance feedback, connect strong matches to referral workflows, and prepare tailored application material for review—not automatic submission.
+              The system now captures feedback; the next step is to turn accumulated evidence into reviewable scoring changes, make profile onboarding repeatable, and prepare stronger applications without automatic submission.
             </p>
           </div>
           <div class="roadmap">
-            <span><i>01</i> Relevance feedback loop</span>
-            <span><i>02</i> Referral workflow</span>
-            <span><i>03</i> Application preparation</span>
-            <span><i>04</i> Search analytics</span>
+            <span><i>01</i> Feedback-informed weight review</span>
+            <span><i>02</i> Self-serve profile onboarding</span>
+            <span><i>03</i> Referral + application preparation</span>
+            <span><i>04</i> Revisit LLM scoring with stable quota</span>
           </div>
         </div>
       </section>
