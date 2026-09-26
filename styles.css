@@ -1087,7 +1087,7 @@ a {
 
 .telegram-proof {
   display: grid;
-  grid-template-columns: 0.66fr 1.34fr;
+  grid-template-columns: 0.85fr 1.15fr;
   gap: clamp(40px, 7vw, 90px);
   align-items: center;
   margin-top: 92px;
@@ -1131,32 +1131,22 @@ a {
   font-weight: 750;
 }
 
-.phone-gallery {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 14px;
-  align-items: center;
-}
-
-.phone-gallery figure {
+.telegram-shot {
+  width: min(100%, 520px);
   margin: 0;
+  justify-self: center;
 }
 
-.phone-gallery figure:nth-child(2) {
-  transform: translateY(-22px);
-}
-
-.phone-gallery img {
+.telegram-shot img {
   display: block;
   width: 100%;
-  aspect-ratio: 0.489;
-  object-fit: cover;
+  height: auto;
   border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 19px;
+  border-radius: 22px;
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.26);
 }
 
-.phone-gallery figcaption {
+.telegram-shot figcaption {
   display: flex;
   gap: 8px;
   margin-top: 10px;
@@ -1165,7 +1155,7 @@ a {
   font-weight: 800;
 }
 
-.phone-gallery figcaption span {
+.telegram-shot figcaption span {
   color: var(--green-bright);
 }
 
@@ -2019,21 +2009,8 @@ a {
     border-radius: 0;
   }
 
-  .phone-gallery {
-    display: flex;
-    gap: 14px;
-    overflow-x: auto;
-    padding: 4px 3px 18px;
-    scroll-snap-type: x mandatory;
-  }
-
-  .phone-gallery figure {
-    min-width: min(78vw, 310px);
-    scroll-snap-align: center;
-  }
-
-  .phone-gallery figure:nth-child(2) {
-    transform: none;
+  .telegram-shot {
+    width: 100%;
   }
 
   .schema-node.shared,

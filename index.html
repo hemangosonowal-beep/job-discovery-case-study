@@ -17,7 +17,7 @@
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://hemangosonowal-beep.github.io/job-discovery-case-study/" />
     <link rel="canonical" href="https://hemangosonowal-beep.github.io/job-discovery-case-study/" />
-    <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="./styles.css?v=20260927-2" />
     <title>Signal, not noise — Job discovery system case study</title>
   </head>
   <body>
@@ -293,20 +293,14 @@
               <span>Optional note</span>
             </div>
           </div>
-          <div class="phone-gallery" aria-label="Screenshots of the live Telegram feedback interface">
-            <figure>
-              <img src="./assets/telegram-digest.jpeg" alt="Telegram top-five job digest with buttons to view each job" loading="lazy" />
-              <figcaption><span>01</span> Ranked digest</figcaption>
-            </figure>
-            <figure>
-              <img src="./assets/telegram-job-detail.jpeg" alt="Telegram job detail view with relevant, not for me and data issue feedback buttons" loading="lazy" />
-              <figcaption><span>02</span> Job-level action</figcaption>
-            </figure>
-            <figure>
-              <img src="./assets/telegram-feedback-reasons.jpeg" alt="Telegram structured reasons for why a job is not relevant" loading="lazy" />
-              <figcaption><span>03</span> Structured reason</figcaption>
-            </figure>
-          </div>
+          <figure class="telegram-shot">
+            <img
+              src="./assets/telegram-feedback-ui.png"
+              alt="Telegram job detail with actions to open the posting, mark it relevant, reject it or report incorrect details"
+              loading="lazy"
+            />
+            <figcaption><span>Live interface</span> Job-level feedback controls</figcaption>
+          </figure>
         </div>
 
         <div class="data-layer reveal">
@@ -496,6 +490,6 @@
       <a href="#top">Back to top <span aria-hidden="true">↑</span></a>
     </footer>
 
-    <script src="./script.js"></script>
+    <script src="./script.js?v=20260927-2"></script>
   </body>
 </html>
